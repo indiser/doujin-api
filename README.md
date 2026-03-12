@@ -1,4 +1,4 @@
-# 📚 nHentai API Wrapper
+# 📚 Doujin API
 
 > *Because sometimes you need to programmatically access manga metadata. For research purposes, obviously.*
 
@@ -29,7 +29,7 @@ This API provides a clean, RESTful interface to retrieve comprehensive manga inf
 
 1. **Clone the repository** (or just copy the files, we won't tell)
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/indiser/doujin-api.git
    cd fastapi
    ```
 
