@@ -86,7 +86,7 @@ async def getManga(id:int):
 
 @app.get("/")
 async def home():
-    return  {"Message":"Go To The EndPoint Moron"}
+    return  {"Message":"Go To The EndPoint Moron /manga_id=id_number"}
 
 
 @app.get("/manga_id={manga_id}")
