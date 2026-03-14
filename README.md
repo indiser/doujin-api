@@ -60,7 +60,7 @@ The API will be available at `http://localhost:8000`
 **Response:**
 ```json
 {
-  "Messege": "Go To The EndPoint Moron"
+  "Messege": "Go To The EndPoint Moron /manga_id=id_number"
 }
 ```
 *Note: Yes, "Messege" is intentionally misspelled. It's a feature, not a bug.*
