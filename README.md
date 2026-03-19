@@ -31,7 +31,7 @@ This API provides a clean, RESTful interface to retrieve comprehensive manga inf
 
 1. **Clone the repository** (or just copy-paste like we all do when no one's watching)
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/indiser/doujin-api.git
    cd fastapi
    ```
 
