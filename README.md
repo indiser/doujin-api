@@ -2,11 +2,11 @@
 
 > *Because sometimes you need to programmatically access manga metadata. For research purposes, obviously.*
 
-A blazingly fast™ FastAPI-based REST API that scrapes and serves manga metadata from nHentai. Built with modern async Python, questionable regex patterns, and just enough web scraping magic to make it work without getting us sued.
+A blazingly fast™ FastAPI-based REST API that scrapes and serves manga metadata from Some Hentai Websites. Built with modern async Python, questionable regex patterns, and just enough web scraping magic to make it work without getting us sued.
 
 ## 🎯 Overview
 
-This API provides a clean, RESTful interface to retrieve comprehensive manga information including metadata, tags, recommendations, and image URLs. It leverages CloudFlare bypass techniques (via `curl_cffi`) and BeautifulSoup for parsing, because apparently nHentai doesn't believe in official APIs. I spent 3 days fighting CloudFlare so you don't have to.
+This API provides a clean, RESTful interface to retrieve comprehensive manga information including metadata, tags, recommendations, and image URLs. It leverages CloudFlare bypass techniques (via `curl_cffi`) and BeautifulSoup for parsing, because apparently Some Hentai Websites doesn't believe in official APIs. I spent 3 days fighting CloudFlare so you don't have to.
 
 ### Key Features
 
@@ -74,7 +74,7 @@ The API will be available at `http://localhost:8000` (assuming nothing caught fi
 **Retrieve manga metadata** by ID.
 
 **Parameters:**
-- `manga_id` (int): The nHentai gallery ID
+- `manga_id` (int): The Some Hentai Websites gallery ID
 
 **Example Request:**
 ```bash
@@ -99,10 +99,10 @@ curl http://localhost:8000/manga_id=177013
   "artists": ["Artist Name"],
   "num_pages": 225,
   "page_urls": [
-    "https://i.nhentai.net/galleries/987654/1.jpg",
-    "https://i.nhentai.net/galleries/987654/2.jpg"
+    "https://i.Some Hentai Websites.net/galleries/987654/1.jpg",
+    "https://i.Some Hentai Websites.net/galleries/987654/2.jpg"
   ],
-  "cover_image": "https://t.nhentai.net/galleries/987654/cover.jpg",
+  "cover_image": "https://t.Some Hentai Websites.net/galleries/987654/cover.jpg",
   "recommendations": [
     {"id": 123456, "title": "Related Title 1"},
     {"id": 789012, "title": "Related Title 2"}
@@ -233,7 +233,7 @@ This project is provided as-is with no license specified. Use it, modify it, sel
 - **FastAPI**: For making Python web development not painful (finally)
 - **curl_cffi**: For solving the CloudFlare problem we didn't want to deal with (you're the real MVP)
 - **BeautifulSoup**: Still the GOAT of HTML parsing after all these years (we're not worthy)
-- **nHentai**: For not having an official API and forcing us to build this (thanks, we guess?)
+- **Some Hentai Websites**: For not having an official API and forcing us to build this (thanks, we guess?)
 - **Stack Overflow**: For the regex pattern we definitely didn't copy-paste at 2 AM
 - **Coffee**: The real dependency that should be in requirements.txt
 - **Our Therapist**: For listening to us complain about CloudFlare for 3 hours straight
