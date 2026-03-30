@@ -2,11 +2,13 @@
 
 > *Because sometimes you need to programmatically access manga metadata. For research purposes, obviously.*
 
-A blazingly fast™ FastAPI-based REST API that scrapes and serves manga metadata from Some Hentai Websites. Built with modern async Python, questionable regex patterns, and just enough web scraping magic to make it work without getting us sued.
+A blazingly fast™ FastAPI-based REST API that scrapes and serves manga metadata from some hentai website. Built with modern async Python, questionable regex patterns, and just enough web scraping magic to make it work without getting us sued.
 
 ## 🎯 Overview
 
-This API provides a clean, RESTful interface to retrieve comprehensive manga information including metadata, tags, recommendations, and image URLs. It leverages CloudFlare bypass techniques (via `curl_cffi`) and BeautifulSoup for parsing, because apparently Some Hentai Websites doesn't believe in official APIs. I spent 3 days fighting CloudFlare so you don't have to.
+This API provides a clean, RESTful interface to retrieve comprehensive manga information including metadata, tags, recommendations, and image URLs. It leverages CloudFlare bypass techniques (via `curl_cffi`) and BeautifulSoup for parsing, because apparently some hentai website doesn't believe in official APIs. I spent 3 days fighting CloudFlare so you don't have to.
+
+**UPDATE**: The old API got deprecated (RIP). We've rebuilt it from scratch to work with some hentai website's new SvelteKit architecture. Because nothing says "fun weekend" like reverse-engineering someone else's frontend framework.
 
 ### Key Features
 
@@ -63,10 +65,10 @@ The API will be available at `http://localhost:8000` (assuming nothing caught fi
 **Response:**
 ```json
 {
-  "Messege": "Go To The EndPoint Moron"
+  "Message": "Go To The EndPoint Moron /manga_id=id_number or /docs for swagger fastapi documentation"
 }
 ```
-*Note: Yes, "Messege" is intentionally misspelled. It's a feature, not a bug. We're committed to the bit. Also, we're too lazy to fix it now.*
+*Note: We actually fixed the "Messege" typo in v2. Character development is real. Also added helpful directions because apparently people need hand-holding.*
 
 ---
 
@@ -74,7 +76,7 @@ The API will be available at `http://localhost:8000` (assuming nothing caught fi
 **Retrieve manga metadata** by ID.
 
 **Parameters:**
-- `manga_id` (int): The Some Hentai Websites gallery ID
+- `manga_id` (int): The some hentai website gallery ID
 
 **Example Request:**
 ```bash
@@ -90,7 +92,7 @@ curl http://localhost:8000/manga_id=177013
   "date": "2023-01-15",
   "media_id": "987654",
   "parodies": ["Original Work"],
-  "charecters": ["Character Name"],
+  "characters": ["Character Name"],
   "groups": ["Group Name"],
   "categories": ["Manga"],
   "language": ["English"],
@@ -98,14 +100,23 @@ curl http://localhost:8000/manga_id=177013
   "tags": ["tag1", "tag2"],
   "artists": ["Artist Name"],
   "num_pages": 225,
+  "media_id": "987654",
   "page_urls": [
-    "https://i.Some Hentai Websites.net/galleries/987654/1.jpg",
-    "https://i.Some Hentai Websites.net/galleries/987654/2.jpg"
+    "https://i.some hentai website.net/galleries/987654/1.jpg",
+    "https://i.some hentai website.net/galleries/987654/2.jpg"
   ],
-  "cover_image": "https://t.Some Hentai Websites.net/galleries/987654/cover.jpg",
+  "cover_image": "https://t.some hentai website.net/galleries/987654/cover.jpg",
   "recommendations": [
-    {"id": 123456, "title": "Related Title 1"},
-    {"id": 789012, "title": "Related Title 2"}
+    {
+      "id": 123456,
+      "title": "Related Title 1",
+      "thumbnail_image": "https://t.some hentai website.net/galleries/123456/thumb.jpg"
+    },
+    {
+      "id": 789012,
+      "title": "Related Title 2",
+      "thumbnail_image": "https://t.some hentai website.net/galleries/789012/thumb.jpg"
+    }
   ]
 }
 ```
@@ -130,11 +141,14 @@ curl http://localhost:8000/manga_id=177013
 
 1. **Request Handling**: FastAPI receives the manga ID via path parameter (the easy part)
 2. **Session Management**: Async session with Chrome impersonation bypasses CloudFlare (the "please don't ban us" part)
-3. **Data Extraction**: 
-   - Regex extracts JSON data from `window._gallery` JavaScript variable (yes, we're parsing JavaScript with regex. No, we're not proud of it)
+3. **CDN Configuration**: Fetches dynamic image server URLs from some hentai website's config API (because hardcoding URLs is so 2023)
+4. **Data Extraction**: 
+   - Regex extracts JSON from SvelteKit's `data-sveltekit-fetched` script tags (yes, we're still parsing JavaScript with regex. Still not proud)
+   - Double JSON parsing because SvelteKit wraps everything like a Russian nesting doll
    - BeautifulSoup parses HTML for recommendations and cover images (the civilized approach)
-4. **URL Generation**: Constructs direct image URLs using media ID and page extensions (string concatenation: a programmer's true love language)
-5. **Response**: Returns clean, structured JSON with all metadata (the part that makes us look competent)
+5. **URL Generation**: Uses actual CDN paths from the API with round-robin server selection (we're fancy now)
+6. **Defensive Programming**: Strict validation and error handling so the API doesn't explode when some hentai website changes their HTML again (narrator: it will)
+7. **Response**: Returns clean, structured JSON with all metadata (the part that makes us look competent)
 
 ### Lifespan Management
 
@@ -145,21 +159,25 @@ The API properly manages the async session lifecycle:
 
 ## 🔧 Configuration
 
-### Headers
-The API uses a standard Chrome User-Agent to avoid detection:
+### Browser Impersonation
+The API lets `curl_cffi` handle all the fingerprinting automatically:
 ```python
-"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36..."
+session = AsyncSession(impersonate="chrome")
 ```
-*We're basically wearing a fake mustache and hoping no one notices.*
+*No custom headers needed. We learned our lesson. Let the library do the heavy lifting while we take credit.*
 
-### Image Extensions
-Supports multiple formats with automatic detection:
-- `j` → JPG (the classic)
-- `p` → PNG (for when you need transparency)
-- `w` → WebP (Google's attempt at world domination)
-- `g` → GIF (because sometimes you need animation)
+### CDN Server Rotation
+Dynamically fetches image servers from some hentai website's config API and uses round-robin distribution:
+```python
+image_pool = itertools.cycle(image_servers)
+```
+*Because load balancing is our passion. Also because we read that one blog post about itertools.cycle and wanted to use it.*
 
-*Single-letter extensions: because why make things easy to understand?*
+### Image Paths
+Now uses full paths directly from the API response instead of manually constructing URLs:
+- No more guessing file extensions
+- No more broken image links at 2 AM
+- Actual professional-looking code (we're as shocked as you are)
 
 ## 🚦 Future Prospects
 
@@ -193,11 +211,11 @@ Because every good project needs a roadmap of features that may or may not ever 
 
 *AKA: Things we know are broken but haven't fixed yet*
 
-- Error handling could be more specific (currently it's just "¯\\_(ツ)_/¯")
 - No retry logic for failed requests (if at first you don't succeed, give up immediately)
 - Session isn't shared across workers in multi-process deployments (each worker is a lone wolf)
-- The typo in "Messege" that we're now too committed to fix
+- If some hentai website changes their SvelteKit structure, everything breaks (it's not a bug, it's job security)
 - Probably some race conditions we haven't discovered yet (they're like Easter eggs, but worse)
+- The API returns "SvelteKit payload not found" when CloudFlare is feeling extra protective (aka Tuesday)
 
 ## 🤝 Contributing
 
@@ -233,8 +251,9 @@ This project is provided as-is with no license specified. Use it, modify it, sel
 - **FastAPI**: For making Python web development not painful (finally)
 - **curl_cffi**: For solving the CloudFlare problem we didn't want to deal with (you're the real MVP)
 - **BeautifulSoup**: Still the GOAT of HTML parsing after all these years (we're not worthy)
-- **Some Hentai Websites**: For not having an official API and forcing us to build this (thanks, we guess?)
-- **Stack Overflow**: For the regex pattern we definitely didn't copy-paste at 2 AM
+- **some hentai website**: For migrating to SvelteKit and breaking our API, forcing us to rebuild everything (thanks for the character development)
+- **SvelteKit**: For the nested JSON structure that made us question our life choices
+- **Stack Overflow**: For the regex pattern we definitely didn't copy-paste at 2 AM (this time it was 3 AM)
 - **Coffee**: The real dependency that should be in requirements.txt
 - **Our Therapist**: For listening to us complain about CloudFlare for 3 hours straight
 
