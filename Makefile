@@ -1,5 +1,5 @@
-VERSION = 1.0.0
-CODENAME = Dead Beet Root
+VERSION = 2.0.0
+CODENAME = Garbage Can
 
 .PHONY: version run dev install clean
 
