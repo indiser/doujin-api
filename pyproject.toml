@@ -1,2 +1,15 @@
+[project]
+name = "my-fastapi-app"
+version = "0.1.0"
+description = "Doujin API"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "beautifulsoup4",
+    "curl_cffi",
+    "gunicorn"
+]
+
 [tool.fastapi]
 entrypoint="main:app"
