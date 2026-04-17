@@ -3,3 +3,4 @@ uvicorn
 curl_cffi
 beautifulsoup4
 gunicorn
+slowapi
