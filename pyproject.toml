@@ -8,7 +8,8 @@ dependencies = [
     "uvicorn",
     "beautifulsoup4",
     "curl_cffi",
-    "gunicorn"
+    "gunicorn",
+    "slowapi"
 ]
 
 [tool.fastapi]
