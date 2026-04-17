@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import re
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -6,6 +6,11 @@ import json
 from curl_cffi.requests import AsyncSession
 from contextlib import asynccontextmanager
 import itertools
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
 
 session = AsyncSession(impersonate="chrome")
 
@@ -15,6 +20,9 @@ async def lifespan(app: FastAPI):
     await session.close()
 
 app=FastAPI(lifespan=lifespan)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 async def getManga(id: int):
     nhentai_url = f"https://nhentai.net/g/{id}/"
@@ -128,10 +136,12 @@ async def getManga(id: int):
 
 
 @app.get("/")
-async def home():
+@limiter.limit("3/second")
+async def home(request: Request):
     return  {"Message":"Go To The EndPoint Moron /manga_id=id_number or /docs for swagger fastapi documentation"}
 
 
 @app.get("/manga_id={manga_id}")
-async def getData(manga_id:int):
+@limiter.limit("3/second")
+async def getData(request: Request, manga_id:int):
     return await getManga(manga_id)
