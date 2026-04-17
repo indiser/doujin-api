@@ -184,7 +184,7 @@ Now uses full paths directly from the API response instead of manually construct
 Because every good project needs a roadmap of features that may or may not ever get implemented (spoiler: they won't):
 
 ### Short-term Goals
-- [ ] **Rate Limiting**: Add proper rate limiting to avoid getting IP banned (again)
+- [x] **Rate Limiting**: ~~Add proper rate limiting to avoid getting IP banned (again)~~ DONE! Now limited to 3 requests/second via SlowAPI. Your spam scripts will have to find another victim.
 - [ ] **Caching**: Implement Redis caching for frequently requested manga (because hitting the same endpoint 1000 times is apparently a thing)
 - [ ] **Error Handling**: More granular error responses (404s, 503s, etc.) instead of just "Error: something broke lol"
 - [ ] **Pagination**: Support for browsing multiple manga (for the power users)
