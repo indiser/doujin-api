@@ -9,6 +9,7 @@ import itertools
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from fastapi.responses import FileResponse
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -134,6 +135,9 @@ async def getManga(id: int):
     except Exception as e:
         return {"Error": str(e)}
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("favicon.ico")
 
 @app.get("/")
 @limiter.limit("3/second")
